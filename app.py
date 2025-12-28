@@ -6,30 +6,21 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return '''
-    <div style="text-align: center; margin-top: 50px; font-family: Arial;">
-        <h1>Mediation Form Generator</h1>
-        <p>Click below to generate the exact replica Word Document.</p>
-        <a href="/download">
-            <button style="padding: 15px 30px; font-size: 18px; background-color: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px;">
-                Download Form A
-            </button>
-        </a>
-    </div>
-    '''
-
-@app.route('/download')
-def download_file():
-    # Run your script to create the file
+    # 1. Script run karke file generate karo
     create_final_custom_height_replica()
-
-    # Must match the filename in main_script.py
+    
+    # 2. File ka Path dhoondo (Absolute Path use kar rahe hain taaki error na aaye)
     filename = "Form_A_Mediation_Replica.docx"
-
+    file_path = os.path.join(os.getcwd(), filename)
+    
+    # 3. Direct Download (Browser mein link kholte hi file milegi)
     try:
-        return send_file(filename, as_attachment=True)
+        if os.path.exists(file_path):
+            return send_file(file_path, as_attachment=True)
+        else:
+            return f"Error: File generate nahi hui. Path: {file_path}"
     except Exception as e:
-        return str(e)
+        return f"Error: {str(e)}"
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
